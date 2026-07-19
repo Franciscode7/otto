@@ -10,6 +10,8 @@ def recibir_orden():
     data = request.json
     print(f"Datos recibidos: {data}")
     
+    #ewjnfe
+    
     if data and 'comando' in data:
         comando = data['comando'].lower()
         if "youtube" in comando:
