@@ -3,5 +3,7 @@ venv/
 .venv/
 env/
 
+.env
+
 receptor22.py
 receptor33.py

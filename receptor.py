@@ -3,7 +3,10 @@ import os
 import subprocess
 import datetime
 import time
+from dotenv import load_dotenv
 from funciones import *
+
+load_dotenv()  # Cargar variables de entorno desde el archivo .env
 
 app = Flask(__name__)
 
@@ -12,7 +15,7 @@ with open("bot.log", "a") as f:
 
 
 # Contraseña simple para seguridad
-API_KEY = "fran123"  # Cámbiala por algo más seguro en producción
+API_KEY = os.getenv("HEADER_KEY")  # Cámbiala por algo más seguro en producción
 
 @app.route('/orden', methods=['POST'])
 def recibir_orden():
@@ -105,4 +108,4 @@ def recibir_orden():
 
 if __name__ == '__main__':
     # Ejecuta la terminal como ADMINISTRADOR para que te deje usar el puerto 7777
-    app.run(host='100.96.246.102', port=7777)
+    app.run(host=os.getenv('HOST'), port=7777)
