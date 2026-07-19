@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -9,6 +10,8 @@ client = OpenAI(
     base_url="https://api.deepseek.com/v1"
 )
 
+
+
 def es_json(cadena):
     """Devuelve True si la cadena es un JSON válido, False si es texto normal."""
     try:
@@ -16,22 +19,34 @@ def es_json(cadena):
         return True
     except (json.JSONDecodeError, TypeError):
         return False
-
-def system_prompt(ruta_json="config.json"):
-    try:
-        with open(ruta_json, "r", encoding="utf-8") as f:
-            datos = json.load(f)
-            return datos.get("system_prompt", "Eres un asistente útil.")
-    except Exception:
-        return "Eres un asistente útil."
     
-def chat_prompt(ruta_json="config.json"):
+def obtener_comportamiento(tipo, ruta_archivo="config.md"):
+
+    ruta_config = os.path.normpath(os.getenv("CONFIG_MD_PATH", "config.md"))
+    
     try:
-        with open(ruta_json, "r", encoding="utf-8") as f:
-            datos = json.load(f)
-            return datos.get("chat_prompt", "Eres un asistente útil.")
-    except Exception:
-        return "Eres un asistente útil."   
+        with open(ruta_config, "r", encoding="utf-8") as f:
+            contenido = f.read()
+        
+        # Esta expresión regular busca "# COMPORTAMIENTO_TU_TIPO" y agarra todo el texto de abajo
+        patron = rf"#\s*{tipo}\s*\n(.*?)(?=\n#|$)"
+        resultado = re.search(patron, contenido, re.DOTALL | re.IGNORECASE)
+        
+        if resultado:
+            return resultado.group(1).strip()
+        else:
+            print(f"⚠️ No se encontró el comportamiento: {tipo}")
+            return "Eres un asistente de IA."
+            
+    except FileNotFoundError:
+        print(f"⚠️ Error: No se encontró {ruta_config}")
+        return "Eres un asistente de IA."
+
+def system_prompt():
+    return obtener_comportamiento("COMPORTAMIENTO_COMANDOS")
+
+def chat_prompt():
+    return obtener_comportamiento("COMPORTAMIENTO_CHAT") 
     
 def ottochat(mensaje: str, prompt_entrada: str):
     

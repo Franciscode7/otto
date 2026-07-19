@@ -1,6 +1,5 @@
 import asyncio
 import os
-from turtle import update
 import requests
 import json
 import re
