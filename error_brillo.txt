@@ -1,1 +1,0 @@
-Error con valor 55: no displays detected
